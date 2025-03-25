@@ -7,10 +7,10 @@ import { columns } from "./columns";
 export const ArquiveXml = () => {
   const { arquives } = useContext(ContextXml);
   const [searchParams] = useSearchParams();
-  const id = searchParams.get("idXml");
+  const idXml = searchParams.get("idXml");
 
-  if (!arquives) return;
-  const arquiveXml = arquives.find((arquive) => arquive.ID === id);
+  const arquiveXml =
+    arquives && arquives.find((arquive) => arquive.ID === idXml);
 
   const xmlGuides =
     arquiveXml?.objectXml?.["ans:mensagemTISS"]?.[
@@ -29,25 +29,35 @@ export const ArquiveXml = () => {
         guide?.["ans:dadosAutorizacao"]?.["ans:numeroGuiaOperadora"]?._text ||
         "",
       senha: guide?.["ans:dadosAutorizacao"]?.["ans:senha"]?._text || "",
-      dataDaAutorizacao:
-        guide?.["ans:dadosAutorizacao"]?.["ans:dataAutorizacao"]?._text
-          ? Intl.DateTimeFormat("pt-BR").format(
-              new Date(guide["ans:dadosAutorizacao"]["ans:dataAutorizacao"]._text.toString())
-            )
-          : "",
-      dataDaValidadeDaSenha:
-      guide?.["ans:dadosAutorizacao"]?.["ans:dataValidadeSenha"]?._text
+      dataDaAutorizacao: guide?.["ans:dadosAutorizacao"]?.[
+        "ans:dataAutorizacao"
+      ]?._text
         ? Intl.DateTimeFormat("pt-BR").format(
-            new Date(guide["ans:dadosAutorizacao"]["ans:dataValidadeSenha"]._text.toString())
+            new Date(
+              guide["ans:dadosAutorizacao"][
+                "ans:dataAutorizacao"
+              ]._text.toString()
+            )
+          )
+        : "",
+      dataDaValidadeDaSenha: guide?.["ans:dadosAutorizacao"]?.[
+        "ans:dataValidadeSenha"
+      ]?._text
+        ? Intl.DateTimeFormat("pt-BR").format(
+            new Date(
+              guide["ans:dadosAutorizacao"][
+                "ans:dataValidadeSenha"
+              ]._text.toString()
+            )
           )
         : "",
     };
   });
-  
+
   return (
     <div className="w-full px-10">
       <h1 className="text-3xl">{arquiveXml?.details.arquiveName}</h1>
-      <DataTable columns={columns} data={guidesToTable}/>
+      <DataTable columns={columns} data={guidesToTable} />
     </div>
   );
 };

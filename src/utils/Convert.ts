@@ -16,7 +16,18 @@ export const ConvertToReal = (value: number | string | undefined) => {
 
 export const ConvertData = (data: string | undefined) => {
 	if (data) {
-		return new Intl.DateTimeFormat('pt-BR').format(new Date(data));
+    return new Date(data);
+		// return new Intl.DateTimeFormat('pt-BR').format(new Date(data));
 	}
-	return ("");
+	return;
+}
+
+export const ConvertDataToXmlFormat = (data: Date | undefined) => {
+	if (data) {
+    const dateFormated = data.toLocaleDateString();
+    const [month, day, year] = dateFormated.split("/");
+    const formattedDate = new Date(`${year}-${month}-${day}`);
+    return formattedDate.toISOString().split("T")[0];
+	}
+	return "";
 }

@@ -13,11 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ConvertData, ConvertToReal } from "@/utils/Convert";
 import { ProcedimentoExecutado } from "@/utils/XmlTypes";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { formSchema } from "../page";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProceduresTableProps {
   procedures: ProcedimentoExecutado[] | ProcedimentoExecutado | undefined;
@@ -25,6 +25,7 @@ interface ProceduresTableProps {
 }
 
 export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
+  const { control, watch, setValue } = form;
   return (
     <AccordionItem className="border rounded mb-4" value="procedures">
       <AccordionTrigger className="p-2 font-semibold">
@@ -38,49 +39,148 @@ export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
               <TableHead className="p-2 text-left">Descrição</TableHead>
               <TableHead className="p-2 text-left">Código</TableHead>
               <TableHead className="p-2 text-left">Data</TableHead>
+              <TableHead className="p-2 text-left">Qtde</TableHead>
+              <TableHead className="p-2 text-left">Valor Unitário</TableHead>
               <TableHead className="p-2 text-left">Valor</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.isArray(procedures) &&
-              procedures.map((proc, idx) => (
-                <TableRow key={idx}>
-                  <FormField
-                    control={form.control}
-                    name={`procedimentos.${idx}.tabelaProcedimento`}
-                    render={({ field }) => (
-                      <FormItem className="ml-1 mt-2">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            value={
-                              typeof field.value === "string" ? field.value : ""
-                            }
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  {/* <TableCell className="p-2">
-                    {proc["ans:procedimento"]["ans:codigoTabela"]._text}
-                  </TableCell> */}
-                  <TableCell className="p-2">
-                    {
-                      proc["ans:procedimento"]["ans:descricaoProcedimento"]
-                        ._text
-                    }
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {proc["ans:procedimento"]["ans:codigoProcedimento"]._text}
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {ConvertData(proc["ans:dataExecucao"]._text)}
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {ConvertToReal(proc["ans:valorTotal"]._text)}
-                  </TableCell>
-                </TableRow>
-              ))}
+              procedures.map((_proc, idx) => {
+                const valorUnitario = watch(
+                  `procedimentos.${idx}.valorUnitarioProcedimento`
+                );
+                const quantidadeProcedimento = watch(
+                  `procedimentos.${idx}.quantidadeProcedimento`
+                );
+
+                setValue(
+                  `procedimentos.${idx}.valorProcedimento`,
+                  String(
+                    Number(quantidadeProcedimento) *
+                      Number(valorUnitario.replace(",", "."))
+                  )
+                );
+
+                return (
+                  <TableRow key={idx}>
+                    <TableCell className="w-[6%]">
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.tabelaProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? <Input {...field} /> : <Skeleton />}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell className="w-2/5">
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.descricaoProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? <Input {...field} /> : <Skeleton />}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.codigoProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? <Input {...field} /> : <Skeleton />}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.dataProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? (
+                                <Input
+                                  {...field}
+                                  type="date"
+                                  value={field.value ? field.value : ""}
+                                />
+                              ) : (
+                                <Skeleton />
+                              )}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell className="w-[6%]">
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.quantidadeProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? <Input {...field} /> : <Skeleton />}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.valorUnitarioProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? (
+                                <Input {...field} />
+                              ) : (
+                                <Skeleton />
+                              )}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <FormField
+                        control={control}
+                        name={`procedimentos.${idx}.valorProcedimento`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              {field ? (
+                                <Input {...field} disabled />
+                              ) : (
+                                <Skeleton />
+                              )}
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </AccordionContent>

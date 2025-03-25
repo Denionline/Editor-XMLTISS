@@ -1,24 +1,24 @@
 import { ContextXml } from "@/context/ContextXml";
-import { ConvertData, ConvertToReal } from "@/utils/Convert";
+import { ConvertToReal } from "@/utils/Convert";
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { GuideForm } from "./components/guide-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { GuiaSPSADT } from "@/utils/XmlTypes";
+import { Button } from "@/components/ui/button";
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { GuideForm } from "./components/guide-form";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { GuiaSPSADT } from "@/utils/XmlTypes";
 
 interface GuideDetailsProps {
-  idGuide: string;
+  idxGuide: string;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -26,31 +26,47 @@ export const formSchema = z.object({
   carteirinha: z.string(),
   guiaDoPrestador: z.string(),
   guiaDaOperadora: z.string(),
-  dataDaAutorizacao: z.string(),
-  dataDaValidadeDaSenha: z.string(),
-  // procedimentos: z.array(
-  //   z.object({
-  //     tabelaProcedimento: z.string(),
-  //     descricaoProcedimento: z.string(),
-  //     codigoProcedimento: z.string(),
-  //     dataProcedimento: z.string(),
-  //     valorProcedimento: z.string(),
-  //   })
-  // ),
+  dataDaAutorizacao: z.string().date(),
+  dataDaValidadeDaSenha: z.string().date().optional(),
+  procedimentos: z.array(
+    z.object({
+      tabelaProcedimento: z.string(),
+      descricaoProcedimento: z.string(),
+      codigoProcedimento: z.string(),
+      dataProcedimento: z.string().date(),
+      quantidadeProcedimento: z.string(),
+      valorUnitarioProcedimento: z.string(),
+      valorProcedimento: z.string(),
+    })
+  ),
+  expenses: z.array(
+    z.object({
+      tabelaExpense: z.string(),
+      descricaoExpense: z.string(),
+      codigoExpense: z.string(),
+      dataExpense: z.string().date(),
+      unidadeExpense: z.string(),
+      quantidadeExpense: z.string(),
+      valorUnitarioExpense: z.string(),
+      valorExpense: z.string(),
+    })
+  ),
 });
 
-export const GuideDetails = ({ idGuide }: GuideDetailsProps) => {
-  const { arquives } = useContext(ContextXml);
+export type FormValuesType = z.infer<typeof formSchema>;
+
+export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
+  const { arquives, UpdateGuideDetails } = useContext(ContextXml);
   const [searchParams] = useSearchParams();
   const idXml = searchParams.get("idXml");
 
   const arquiveXml =
     arquives && arquives.find((arquive) => arquive.ID === idXml);
-  const [guide, setGuide] = useState(
-    arquiveXml?.objectXml["ans:mensagemTISS"]["ans:prestadorParaOperadora"][
+  const guide =
+    arquiveXml &&
+    (arquiveXml.objectXml["ans:mensagemTISS"]["ans:prestadorParaOperadora"][
       "ans:loteGuias"
-    ]["ans:guiasTISS"]["ans:guiaSP-SADT"][Number(idGuide)] as GuiaSPSADT
-  );
+    ]["ans:guiasTISS"]["ans:guiaSP-SADT"][Number(idxGuide)] as GuiaSPSADT);
 
   const [totals, setTotals] = useState({
     totalDespesas: 0,
@@ -59,14 +75,6 @@ export const GuideDetails = ({ idGuide }: GuideDetailsProps) => {
   });
 
   useEffect(() => {
-    if (arquiveXml) {
-      setGuide(
-        arquiveXml?.objectXml["ans:mensagemTISS"]["ans:prestadorParaOperadora"][
-          "ans:loteGuias"
-        ]["ans:guiasTISS"]["ans:guiaSP-SADT"][Number(idGuide)] as GuiaSPSADT
-      );
-    }
-
     if (guide && guide["ans:procedimentosExecutados"]) {
       const totalProcedimentos =
         guide["ans:procedimentosExecutados"][
@@ -74,12 +82,10 @@ export const GuideDetails = ({ idGuide }: GuideDetailsProps) => {
         ].reduce((acc, proc) => {
           return acc + Number(proc["ans:valorTotal"]._text);
         }, 0) || 0;
-      setTotals((prev) => {
-        return {
-          ...prev,
-          totalProcedimentos,
-        };
-      });
+      setTotals((prev) => ({
+        ...prev,
+        totalProcedimentos,
+      }));
     }
 
     if (guide && guide["ans:outrasDespesas"]) {
@@ -89,57 +95,86 @@ export const GuideDetails = ({ idGuide }: GuideDetailsProps) => {
             acc + Number(desp["ans:servicosExecutados"]["ans:valorTotal"]._text)
           );
         }, 0) || 0;
-      setTotals((prev) => {
-        return {
-          ...prev,
-          totalDespesas,
-        };
-      });
+      setTotals((prev) => ({
+        ...prev,
+        totalDespesas,
+      }));
     }
 
-    setTotals((prev) => {
-      const totalGuide = prev.totalProcedimentos + prev.totalDespesas;
-      return {
-        ...prev,
-        totalGuide,
-      };
-    });
-  }, [arquiveXml, idGuide, guide]);
+    setTotals((prev) => ({
+      ...prev,
+      totalGuide: prev.totalProcedimentos + prev.totalDespesas,
+    }));
+  }, [guide]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValuesType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      carteirinha: guide && guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text,
-      guiaDoPrestador:
-      guide && guide["ans:cabecalhoGuia"]["ans:numeroGuiaPrestador"]._text,
-      guiaDaOperadora:
-      guide && guide["ans:dadosAutorizacao"]["ans:numeroGuiaOperadora"]._text,
-      dataDaAutorizacao: ConvertData(
-        guide && guide["ans:dadosAutorizacao"]["ans:dataAutorizacao"]._text
-      ),
-      dataDaValidadeDaSenha: ConvertData(
-        guide && guide["ans:dadosAutorizacao"]["ans:dataValidadeSenha"]?._text
-      ),
-      // procedimentos: guide["ans:procedimentosExecutados"]?.[
-      //   "ans:procedimentoExecutado"
-      // ].map((proc) => {
-      //   return {
-      //     tabelaProcedimento:
-      //       proc["ans:procedimento"]["ans:codigoTabela"]._text,
-      //     descricaoProcedimento:
-      //       proc["ans:procedimento"]["ans:descricaoProcedimento"]._text,
-      //     codigoProcedimento:
-      //       proc["ans:procedimento"]["ans:codigoProcedimento"]._text,
-      //     dataProcedimento: ConvertData(proc["ans:dataExecucao"]._text),
-      //     valorProcedimento: ConvertToReal(proc["ans:valorTotal"]._text),
-      //   };
-      // }),
-    },
   });
-  const { handleSubmit } = form;
+
+  const { handleSubmit, reset, formState } = form;
+
+  //Default values on form
+  useEffect(() => {
+    if (guide) {
+      reset({
+        carteirinha: guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text,
+        guiaDoPrestador:
+          guide["ans:cabecalhoGuia"]["ans:numeroGuiaPrestador"]._text,
+        guiaDaOperadora:
+          guide["ans:dadosAutorizacao"]["ans:numeroGuiaOperadora"]._text,
+        dataDaAutorizacao:
+          guide["ans:dadosAutorizacao"]["ans:dataAutorizacao"]._text,
+        dataDaValidadeDaSenha:
+          guide["ans:dadosAutorizacao"]["ans:dataValidadeSenha"]?._text,
+        procedimentos: guide["ans:procedimentosExecutados"]?.[
+          "ans:procedimentoExecutado"
+        ].map((proc) => ({
+          tabelaProcedimento:
+            proc["ans:procedimento"]["ans:codigoTabela"]._text,
+          descricaoProcedimento:
+            proc["ans:procedimento"]["ans:descricaoProcedimento"]._text,
+          codigoProcedimento:
+            proc["ans:procedimento"]["ans:codigoProcedimento"]._text,
+          dataProcedimento: proc["ans:dataExecucao"]._text,
+          quantidadeProcedimento: proc["ans:quantidadeExecutada"]._text,
+          valorUnitarioProcedimento: ConvertToReal(proc["ans:valorUnitario"]._text)
+            .replace("R$", "")
+            .trim(),
+          valorProcedimento: ConvertToReal(proc["ans:valorTotal"]._text)
+            .replace("R$", "")
+            .trim(),
+        })),
+        expenses: guide["ans:outrasDespesas"]?.["ans:despesa"].map((desp) => ({
+          tabelaExpense:
+            desp["ans:servicosExecutados"]["ans:codigoTabela"]._text,
+          descricaoExpense:
+            desp["ans:servicosExecutados"]["ans:descricaoProcedimento"]._text,
+          codigoExpense:
+            desp["ans:servicosExecutados"]["ans:codigoProcedimento"]._text,
+          dataExpense: desp["ans:servicosExecutados"]["ans:dataExecucao"]._text,
+          unidadeExpense:
+            desp["ans:servicosExecutados"]["ans:unidadeMedida"]._text,
+          quantidadeExpense:
+            desp["ans:servicosExecutados"]["ans:quantidadeExecutada"]._text,
+          valorUnitarioExpense: ConvertToReal(
+            desp["ans:servicosExecutados"]["ans:valorUnitario"]._text
+          )
+            .replace("R$", "")
+            .trim(),
+          valorExpense: ConvertToReal(
+            desp["ans:servicosExecutados"]["ans:valorTotal"]?._text
+          )
+            .replace("R$", "")
+            .trim(),
+        })),
+      });
+    }
+  }, [guide, reset]);
 
   function handleClickSaveButton(data: any) {
-    console.log(data);
+    if (idXml) {
+      UpdateGuideDetails(idXml, Number(idxGuide), data);
+    }
   }
 
   return (
@@ -179,6 +214,7 @@ export const GuideDetails = ({ idGuide }: GuideDetailsProps) => {
             <Button
               variant="default"
               onClick={handleSubmit(handleClickSaveButton)}
+              disabled={!formState.isDirty}
             >
               Salvar
             </Button>

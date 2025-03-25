@@ -10,13 +10,13 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { formSchema } from "../page";
+import { FormValuesType } from "../page";
 import { UseFormReturn } from "react-hook-form";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface GuideFormProps {
   guide: GuiaSPSADT;
-  form: UseFormReturn<z.infer<typeof formSchema>>;
+  form: UseFormReturn<FormValuesType>;
 }
 
 export const GuideForm = ({ guide, form }: GuideFormProps) => {
@@ -35,7 +35,7 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
                   Guia do prestador
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  {field ? <Input {...field} /> : <Skeleton />}
                 </FormControl>
               </FormItem>
             )}
@@ -49,7 +49,7 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
                   Guia da operadora
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  {field ? <Input {...field} /> : <Skeleton />}
                 </FormControl>
               </FormItem>
             )}
@@ -64,7 +64,7 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
               <FormItem className="ml-1 mt-2 flex-1">
                 <FormLabel className="font-semibold">Carteirinha</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  {field ? <Input {...field} /> : <Skeleton />}
                 </FormControl>
               </FormItem>
             )}
@@ -78,7 +78,15 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
                   Data da Autorização
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  {field ? (
+                    <Input
+                      {...field}
+                      type="date"
+                      value={field.value ? field.value : ""}
+                    />
+                  ) : (
+                    <Skeleton />
+                  )}
                 </FormControl>
               </FormItem>
             )}
@@ -92,7 +100,15 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
                   Data da validade da senha
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  {field ? (
+                    <Input
+                      {...field}
+                      type="date"
+                      value={field.value ? field.value : ""}
+                    />
+                  ) : (
+                    <Skeleton />
+                  )}
                 </FormControl>
               </FormItem>
             )}
@@ -113,6 +129,7 @@ export const GuideForm = ({ guide, form }: GuideFormProps) => {
           {guide["ans:outrasDespesas"] && (
             <ExpensesTable
               expenses={guide["ans:outrasDespesas"]?.["ans:despesa"]}
+              form={form}
             />
           )}
         </Accordion>

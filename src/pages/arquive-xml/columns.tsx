@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { GuideDetails } from "../guide-details/page";
 
@@ -69,7 +69,6 @@ export const columns: ColumnDef<{
   },
   {
     id: "actions",
-    header: "",
     cell: ({ row }) => {
       return (
         <Dialog>
@@ -78,7 +77,7 @@ export const columns: ColumnDef<{
               Abrir
             </Button>
           </DialogTrigger>
-          <GuideDetails idGuide={row.id} />
+          <GuideDetails idxGuide={row.id} />
         </Dialog>
       );
     },
@@ -86,9 +85,12 @@ export const columns: ColumnDef<{
 ];
 
 {
-  /* <Link to={`/arquive-list/xml/guide?idGuide=${row.id}&idXml=${id}`}>
+  /*
+  const idXml = row.original.idXml; 
+        <Link to={`/arquive-list/xml/guide?idXml=${idXml}&idGuide=${row.id}`}>
           <Button variant={"outline"} className="bg-card">
             Abrir
           </Button>
-        </Link> */
+        </Link>
+  */
 }

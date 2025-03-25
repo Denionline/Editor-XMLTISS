@@ -3,7 +3,6 @@ import { Home } from "./pages/home";
 import { DefaultLayout } from "./layouts/default-layout";
 import { ArquiveList } from "./pages/arquive-list";
 import { ArquiveXml } from "./pages/arquive-xml/page";
-import { GuideDetails } from "./pages/guide-details/page";
 
 export const Router = createBrowserRouter([
   {
@@ -16,7 +15,6 @@ export const Router = createBrowserRouter([
         element: <ArquiveList />,
       },
       { path: "arquive-list/xml", element: <ArquiveXml /> },
-      { path: "arquive-list/xml/guide", element: <GuideDetails /> },
     ],
   },
 ]);

@@ -10,13 +10,13 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FormValuesType } from "../page";
+import { FormGuideType } from "../page";
 import { UseFormReturn } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface GuideFormProps {
   guide: GuiaSPSADT;
-  form: UseFormReturn<FormValuesType>;
+  form: UseFormReturn<FormGuideType>;
 }
 
 export const GuideForm = ({ guide, form }: GuideFormProps) => {

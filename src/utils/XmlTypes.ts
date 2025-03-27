@@ -45,7 +45,10 @@ interface Cabecalho {
   "ans:identificacaoTransacao": IdentificacaoTransacao;
   "ans:origem": Origem;
   "ans:destino": Destino;
-  "ans:Padrao": {
+  "ans:Padrao"?: {
+    _text: string;
+  };
+  "ans:versaoPadrao"?: {
     _text: string;
   };
 }
@@ -336,7 +339,7 @@ interface Epilogo {
   };
 }
 
-export interface ObjectXml {
+export interface ObjectXmlType {
   "ans:mensagemTISS": {
     "ans:cabecalho": Cabecalho;
     "ans:prestadorParaOperadora": PrestadorParaOperadora;

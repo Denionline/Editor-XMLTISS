@@ -1,33 +1,31 @@
 export const ConvertToReal = (value: number | string | undefined) => {
-  if (value) {
-    if (typeof value == "string") {
-      return new Intl.NumberFormat("pt-BR", {
-        currency: "BRL",
-        style: "currency",
-      }).format(Number(value));
-    }
+  if (value != undefined) {
     return new Intl.NumberFormat("pt-BR", {
       currency: "BRL",
       style: "currency",
-    }).format(value);
+    }).format(typeof value == "string" ? Number(value) : value);
   }
-  return ("");
+  return "";
 };
 
 export const ConvertData = (data: string | undefined) => {
-	if (data) {
+  if (data) {
     return new Date(data);
-		// return new Intl.DateTimeFormat('pt-BR').format(new Date(data));
-	}
-	return;
-}
+    // return new Intl.DateTimeFormat('pt-BR').format(new Date(data));
+  }
+  return;
+};
 
 export const ConvertDataToXmlFormat = (data: Date | undefined) => {
-	if (data) {
+  if (data) {
     const dateFormated = data.toLocaleDateString();
     const [month, day, year] = dateFormated.split("/");
     const formattedDate = new Date(`${year}-${month}-${day}`);
     return formattedDate.toISOString().split("T")[0];
-	}
-	return "";
-}
+  }
+  return "";
+};
+
+export const MultiQtdeValorUn = (qtde: string, valorUn: string) => {
+  return String(Number(qtde) * Number(valorUn));
+};

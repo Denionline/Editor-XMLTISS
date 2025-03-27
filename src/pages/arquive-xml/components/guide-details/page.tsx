@@ -1,5 +1,5 @@
 import { ContextXml } from "@/context/ContextXml";
-import { ConvertToReal } from "@/utils/Convert";
+import { ConvertToReal, MultiQtdeValorUn } from "@/utils/Convert";
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,35 +28,37 @@ export const formSchema = z.object({
   guiaDaOperadora: z.string(),
   dataDaAutorizacao: z.string().date(),
   dataDaValidadeDaSenha: z.string().date().optional(),
-  procedimentos: z.array(
-    z.object({
-      tabelaProcedimento: z.string(),
-      descricaoProcedimento: z.string(),
-      codigoProcedimento: z.string(),
-      dataProcedimento: z.string().date(),
-      quantidadeProcedimento: z.string(),
-      valorUnitarioProcedimento: z.string(),
-      valorProcedimento: z.string(),
-    })
-  ),
-  expenses: z.array(
-    z.object({
-      tabelaExpense: z.string(),
-      descricaoExpense: z.string(),
-      codigoExpense: z.string(),
-      dataExpense: z.string().date(),
-      unidadeExpense: z.string(),
-      quantidadeExpense: z.string(),
-      valorUnitarioExpense: z.string(),
-      valorExpense: z.string(),
-    })
-  ),
+  procedimentos: z
+    .array(
+      z.object({
+        tabelaProcedimento: z.string(),
+        descricaoProcedimento: z.string(),
+        codigoProcedimento: z.string(),
+        dataProcedimento: z.string().date(),
+        quantidadeProcedimento: z.string(),
+        valorUnitarioProcedimento: z.string(),
+      })
+    )
+    .optional(),
+  expenses: z
+    .array(
+      z.object({
+        tabelaExpense: z.string(),
+        descricaoExpense: z.string(),
+        codigoExpense: z.string(),
+        dataExpense: z.string().date(),
+        unidadeExpense: z.string(),
+        quantidadeExpense: z.string(),
+        valorUnitarioExpense: z.string(),
+      })
+    )
+    .optional(),
 });
 
-export type FormValuesType = z.infer<typeof formSchema>;
+export type FormGuideType = z.infer<typeof formSchema>;
 
 export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
-  const { arquives, UpdateGuideDetails } = useContext(ContextXml);
+  const { arquives, updateGuideDetails } = useContext(ContextXml);
   const [searchParams] = useSearchParams();
   const idXml = searchParams.get("idXml");
 
@@ -74,47 +76,13 @@ export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
     totalGuide: 0,
   });
 
-  useEffect(() => {
-    if (guide && guide["ans:procedimentosExecutados"]) {
-      const totalProcedimentos =
-        guide["ans:procedimentosExecutados"][
-          "ans:procedimentoExecutado"
-        ].reduce((acc, proc) => {
-          return acc + Number(proc["ans:valorTotal"]._text);
-        }, 0) || 0;
-      setTotals((prev) => ({
-        ...prev,
-        totalProcedimentos,
-      }));
-    }
-
-    if (guide && guide["ans:outrasDespesas"]) {
-      const totalDespesas =
-        guide["ans:outrasDespesas"]["ans:despesa"].reduce((acc, desp) => {
-          return (
-            acc + Number(desp["ans:servicosExecutados"]["ans:valorTotal"]._text)
-          );
-        }, 0) || 0;
-      setTotals((prev) => ({
-        ...prev,
-        totalDespesas,
-      }));
-    }
-
-    setTotals((prev) => ({
-      ...prev,
-      totalGuide: prev.totalProcedimentos + prev.totalDespesas,
-    }));
-  }, [guide]);
-
-  const form = useForm<FormValuesType>({
+  const form = useForm<FormGuideType>({
     resolver: zodResolver(formSchema),
   });
 
   const { handleSubmit, reset, formState } = form;
 
-  //Default values on form
-  useEffect(() => {
+  function setDefaultValuesOnForm() {
     if (guide) {
       reset({
         carteirinha: guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text,
@@ -137,12 +105,7 @@ export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
             proc["ans:procedimento"]["ans:codigoProcedimento"]._text,
           dataProcedimento: proc["ans:dataExecucao"]._text,
           quantidadeProcedimento: proc["ans:quantidadeExecutada"]._text,
-          valorUnitarioProcedimento: ConvertToReal(proc["ans:valorUnitario"]._text)
-            .replace("R$", "")
-            .trim(),
-          valorProcedimento: ConvertToReal(proc["ans:valorTotal"]._text)
-            .replace("R$", "")
-            .trim(),
+          valorUnitarioProcedimento: proc["ans:valorUnitario"]._text,
         })),
         expenses: guide["ans:outrasDespesas"]?.["ans:despesa"].map((desp) => ({
           tabelaExpense:
@@ -156,26 +119,66 @@ export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
             desp["ans:servicosExecutados"]["ans:unidadeMedida"]._text,
           quantidadeExpense:
             desp["ans:servicosExecutados"]["ans:quantidadeExecutada"]._text,
-          valorUnitarioExpense: ConvertToReal(
-            desp["ans:servicosExecutados"]["ans:valorUnitario"]._text
-          )
-            .replace("R$", "")
-            .trim(),
-          valorExpense: ConvertToReal(
-            desp["ans:servicosExecutados"]["ans:valorTotal"]?._text
-          )
-            .replace("R$", "")
-            .trim(),
+          valorUnitarioExpense:
+            desp["ans:servicosExecutados"]["ans:valorUnitario"]._text,
         })),
       });
     }
-  }, [guide, reset]);
+  }
+
+  useEffect(() => {
+    setDefaultValuesOnForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guide]);
+
+  function handleClickCancel() {
+    setDefaultValuesOnForm();
+  }
 
   function handleClickSaveButton(data: any) {
     if (idXml) {
-      UpdateGuideDetails(idXml, Number(idxGuide), data);
+      updateGuideDetails(idXml, Number(idxGuide), data);
+      setDefaultValuesOnForm();
     }
   }
+
+  useEffect(() => {
+    if (guide && guide["ans:procedimentosExecutados"]) {
+      const totalProcedimentos =
+        guide["ans:procedimentosExecutados"][
+          "ans:procedimentoExecutado"
+        ].reduce((acc, proc) => {
+          const valueProcedure = MultiQtdeValorUn(
+            proc["ans:quantidadeExecutada"]._text,
+            proc["ans:valorUnitario"]._text
+          );
+          return acc + Number(valueProcedure);
+        }, 0) || 0;
+      setTotals((prev) => ({
+        ...prev,
+        totalProcedimentos,
+      }));
+    }
+
+    if (guide && guide["ans:outrasDespesas"]) {
+      const totalDespesas =
+        guide["ans:outrasDespesas"]["ans:despesa"].reduce((acc, desp) => {
+          const valueExpense = MultiQtdeValorUn(
+            desp["ans:servicosExecutados"]["ans:quantidadeExecutada"]._text,
+            desp["ans:servicosExecutados"]["ans:valorUnitario"]._text
+          );
+          return acc + Number(valueExpense);
+        }, 0) || 0;
+      setTotals((prev) => ({
+        ...prev,
+        totalDespesas,
+      }));
+    }
+    setTotals((prev) => ({
+      ...prev,
+      totalGuide: prev.totalProcedimentos + prev.totalDespesas,
+    }));
+  }, [guide, arquives]);
 
   return (
     <DialogContent className="flex flex-col justify-between max-w-5xl h-5/6">
@@ -209,7 +212,9 @@ export const GuideDetails = ({ idxGuide }: GuideDetailsProps) => {
           </ScrollArea>
           <div className="w-full flex justify-end gap-4 mt-2">
             <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
+              <Button variant="outline" onClick={handleClickCancel}>
+                Cancelar
+              </Button>
             </DialogClose>
             <Button
               variant="default"

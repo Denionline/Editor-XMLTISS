@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { GuideDetails } from "../guide-details/page";
+import { GuideDetails } from "./guide-details/page";
 
 export interface GuiaSPSADT_table {
   carteirinha: string;
@@ -10,7 +10,7 @@ export interface GuiaSPSADT_table {
   guiaDaOperadora: string;
   senha: string;
   dataDaAutorizacao: string;
-  dataDaValidadeDaSenha: string;
+  // dataDaValidadeDaSenha: string;
 }
 
 export const columns: ColumnDef<{
@@ -19,7 +19,7 @@ export const columns: ColumnDef<{
   guiaDaOperadora: string | { _text: string | undefined };
   senha: string | { _text: string | undefined };
   dataDaAutorizacao: string | { _text: string | undefined };
-  dataDaValidadeDaSenha: string | { _text: string | undefined };
+  // dataDaValidadeDaSenha: string | { _text: string | undefined };
 }>[] = [
   {
     id: "select",
@@ -63,22 +63,24 @@ export const columns: ColumnDef<{
     accessorKey: "dataDaAutorizacao",
     header: "Data da autorização",
   },
-  {
-    accessorKey: "dataDaValidadeDaSenha",
-    header: "Data da validade da senha",
-  },
+  // {
+  //   accessorKey: "dataDaValidadeDaSenha",
+  //   header: "Data da validade da senha",
+  // },
   {
     id: "actions",
     cell: ({ row }) => {
       return (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant={"outline"} className="bg-card">
-              Abrir
-            </Button>
-          </DialogTrigger>
-          <GuideDetails idxGuide={row.id} />
-        </Dialog>
+        <div className="flex justify-end">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant={"outline"} className="bg-card">
+                Abrir
+              </Button>
+            </DialogTrigger>
+            <GuideDetails idxGuide={row.id} />
+          </Dialog>
+        </div>
       );
     },
   },

@@ -25,7 +25,7 @@ interface ProceduresTableProps {
 }
 
 export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
-  const { control, watch, setValue } = form;
+  const { control, watch } = form;
   return (
     <AccordionItem className="border rounded mb-4" value="procedures">
       <AccordionTrigger className="p-2 font-semibold">
@@ -54,14 +54,11 @@ export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
                   `procedimentos.${idx}.quantidadeProcedimento`
                 );
 
-                setValue(
-                  `procedimentos.${idx}.valorProcedimento`,
-                  String(
-                    Number(quantidadeProcedimento) *
-                      Number(valorUnitario.replace(",", "."))
-                  )
+                const valorTotal = Number(
+                  (
+                    Number(quantidadeProcedimento) * Number(valorUnitario)
+                  ).toFixed(2)
                 );
-
                 return (
                   <TableRow key={idx}>
                     <TableCell className="w-[6%]">
@@ -92,7 +89,7 @@ export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
                       />
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="w-[12%]">
                       <FormField
                         control={control}
                         name={`procedimentos.${idx}.codigoProcedimento`}
@@ -142,42 +139,27 @@ export const ProceduresTable = ({ procedures, form }: ProceduresTableProps) => {
                       />
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="w-[12%]">
                       <FormField
                         control={control}
                         name={`procedimentos.${idx}.valorUnitarioProcedimento`}
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              {field ? (
-                                <Input {...field} />
-                              ) : (
-                                <Skeleton />
-                              )}
+                              {field ? <Input {...field} /> : <Skeleton />}
                             </FormControl>
                           </FormItem>
                         )}
                       />
                     </TableCell>
 
-                    <TableCell>
-                      <FormField
-                        control={control}
-                        name={`procedimentos.${idx}.valorProcedimento`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              {field ? (
-                                <Input {...field} disabled />
-                              ) : (
-                                <Skeleton />
-                              )}
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+                    <TableCell className="w-[13%]">
+                      {valorTotal ? (
+                        <Input value={valorTotal} disabled />
+                      ) : (
+                        <Skeleton />
+                      )}
                     </TableCell>
-
                   </TableRow>
                 );
               })}

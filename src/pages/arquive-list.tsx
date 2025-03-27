@@ -5,9 +5,8 @@ import {
   DialogContent,
   DialogTitle,
   DialogFooter,
-  DialogClose,
 } from "../components/ui/dialog";
-import { TableXmlList } from "../components/table-xml-list";
+import { TableXmlList } from "./components/table-xml-list";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useForm } from "react-hook-form";
@@ -43,7 +42,7 @@ export const ArquiveList = () => {
             alwaysChildren: true,
           })
         );
-        setIsOpenNewXmlDialog(false)
+        setIsOpenNewXmlDialog(false);
         AddNewArquive(xmlInJson, fileName);
       }
     };
@@ -56,9 +55,11 @@ export const ArquiveList = () => {
         <h1 className="text-3xl text-muted-foreground-foreground">
           Lista de arquivos (.xml)
         </h1>
-        <Dialog open={isOpenNewXmlDialog}>
+        <Dialog open={isOpenNewXmlDialog} onOpenChange={setIsOpenNewXmlDialog}>
           <DialogTrigger asChild>
-            <Button onClick={() => setIsOpenNewXmlDialog(true)}>Novo arquivo</Button>
+            <Button onClick={() => setIsOpenNewXmlDialog(true)}>
+              Novo arquivo
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader className="mb-2">
@@ -73,12 +74,15 @@ export const ArquiveList = () => {
               />
             </form>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant={"outline"} onClick={() => setIsOpenNewXmlDialog(false)}>Cancelar</Button>
-              </DialogClose>
-                <Button type="submit" onClick={handleSubmit(handleClickSubmit)}>
-                  Salvar
-                </Button>
+              <Button
+                variant={"outline"}
+                onClick={() => setIsOpenNewXmlDialog(false)}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" onClick={handleSubmit(handleClickSubmit)}>
+                Salvar
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

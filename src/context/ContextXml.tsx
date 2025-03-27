@@ -11,6 +11,7 @@ import { CheckCircle } from "@phosphor-icons/react";
 import { ToastAction } from "@/components/ui/toast";
 import { FormXmlType } from "@/pages/arquive-xml/page";
 import { MultiQtdeValorUn } from "@/utils/Convert";
+import { Object2Xml } from "@/utils/Objetct2Xml";
 
 export interface ArquiveType {
   ID: string;
@@ -34,6 +35,7 @@ export interface ContextXmlType {
   ) => void;
   removeXml: (idxXml: string, setIsDisabledBtnRemove: any) => void;
   deleteGuides: (idXml: string, guides: string[]) => void;
+  tranformObjetoToXml: (idXml: string) => void;
 }
 
 export const ContextXml = createContext({} as ContextXmlType);
@@ -169,6 +171,7 @@ export const ContextXmlProvider = ({ children }: any) => {
       ...ArquiveXml,
       details: {
         ...ArquiveXml.details,
+        guidesQuantity: guidesUpdated.length,
         totalValueXml: totalValueXml.toFixed(2),
       },
     };
@@ -288,7 +291,7 @@ export const ContextXmlProvider = ({ children }: any) => {
     ) {
       guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text = carteirinha;
     }
-    
+
     if (
       guide["ans:cabecalhoGuia"]["ans:numeroGuiaPrestador"]._text !=
       guiaDoPrestador
@@ -549,6 +552,13 @@ export const ContextXmlProvider = ({ children }: any) => {
     setIsDisabledBtnRemove(false);
   }
 
+  function tranformObjetoToXml(idXml: string) {
+    const arquiveSelected = arquives.find((arquive) => arquive.ID === idXml);
+    if (arquiveSelected) {
+      Object2Xml(arquiveSelected);
+    }
+  }
+
   return (
     <ContextXml.Provider
       value={{
@@ -558,6 +568,7 @@ export const ContextXmlProvider = ({ children }: any) => {
         updateXmlDetails,
         removeXml,
         deleteGuides,
+        tranformObjetoToXml,
       }}
     >
       {children}

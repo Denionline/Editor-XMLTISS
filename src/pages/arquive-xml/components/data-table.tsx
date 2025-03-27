@@ -176,7 +176,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Não foram encontradas guias com esse número de operadora.
+                  Não foram encontradas guias.
                 </TableCell>
               </TableRow>
             )}

@@ -11,9 +11,19 @@ import {
 import { ContextXml } from "@/context/ContextXml";
 import { useContext, useState } from "react";
 import { ConvertToReal } from "@/utils/Convert";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const TableXmlList = () => {
-  const { arquives, removeXml } = useContext(ContextXml);
+  const { arquives, removeXml, tranformObjetoToXml } = useContext(ContextXml);
   const [isDisabledBtnRemove, setIsDisabledBtnRemove] = useState(false);
 
   function handleClickToRemoveXml(idXml: string) {
@@ -21,11 +31,16 @@ export const TableXmlList = () => {
     removeXml(idXml, setIsDisabledBtnRemove);
   }
 
+  function handleClickBaixar(idXml: string) {
+    tranformObjetoToXml(idXml);
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Nome do arquivo</TableHead>
+          <TableHead className="w-40">Número protocolo</TableHead>
           <TableHead className="w-40">Quantidade guias</TableHead>
           <TableHead className="w-40">Valor</TableHead>
           <TableHead className="w-52">Criado em</TableHead>
@@ -35,11 +50,18 @@ export const TableXmlList = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {arquives &&
+        {arquives?.length ? (
           arquives.map((row) => {
             return (
               <TableRow key={row.ID}>
                 <TableCell>{row.details.arquiveName}</TableCell>
+                <TableCell>
+                  {
+                    row.objectXml["ans:mensagemTISS"][
+                      "ans:prestadorParaOperadora"
+                    ]["ans:loteGuias"]["ans:numeroLote"]._text
+                  }
+                </TableCell>
                 <TableCell>{row.details.guidesQuantity}</TableCell>
                 <TableCell>
                   {ConvertToReal(row.details.totalValueXml)}
@@ -58,22 +80,54 @@ export const TableXmlList = () => {
                   <Button
                     variant={"ghost"}
                     className="bg-blue-800 hover:bg-blue-900"
+                    onClick={() => handleClickBaixar(row.ID)}
                   >
                     Baixar
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant={"destructive"}
-                    onClick={() => handleClickToRemoveXml(row.ID)}
-                    disabled={isDisabledBtnRemove}
-                  >
-                    Excluir
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={"destructive"}
+                        disabled={isDisabledBtnRemove}
+                      >
+                        Excluir
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          Confirma a exclusão do arquivo?
+                        </DialogTitle>
+                      </DialogHeader>
+                      <DialogDescription className="my-6">
+                        <p>
+                          O arquivo {row.details.arquiveName} será excluído
+                          permanentemente.
+                        </p>
+                      </DialogDescription>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancelar</Button>
+                        </DialogClose>
+                        <Button onClick={() => handleClickToRemoveXml(row.ID)}>
+                          Sim
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             );
-          })}
+          })
+        ) : (
+          <TableRow className="hover:bg-transparent">
+            <TableCell colSpan={8} className="text-center h-24 text-xl">
+              Não foram encontradas arquivos .xml
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

@@ -1,4 +1,4 @@
-import { ArquiveType } from "@/context/ContextXml";
+import { ArquiveType } from "@/reducer/arquive/reducer";
 import { json2xml } from "xml-js";
 
 export const Object2Xml = ({ details, objectXml }: ArquiveType) => {

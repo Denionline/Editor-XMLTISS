@@ -75,7 +75,7 @@ export const ArquiveXml = () => {
             "ans:versaoPadrao"
           ]?._text ||
           "",
-        valorXML: arquiveXml?.details.totalValueXml,
+        valorXML: arquiveXml?.details.totalValue,
       });
     }
   }

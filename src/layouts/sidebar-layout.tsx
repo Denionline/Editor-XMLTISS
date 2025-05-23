@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 
 export const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={true}>
       <AppSidebar />
       <main>
         <SidebarTrigger/>

@@ -163,14 +163,14 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 				procedures: false,
 				expenses: false,
 			};
-			console.log(idxArquive);
-			const guide =
+			const guideOriginal =
 				state[idxArquive] &&
-				(state[idxArquive].objectXml["ans:mensagemTISS"][
+				state[idxArquive].objectXml["ans:mensagemTISS"][
 					"ans:prestadorParaOperadora"
 				]["ans:loteGuias"]["ans:guiasTISS"]["ans:guiaSP-SADT"][
 					action.payload.idxGuide
-				] as GuiaSPSADT);
+				];
+			const guide = JSON.parse(JSON.stringify(guideOriginal)) as GuiaSPSADT;
 			if (
 				guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text !=
 				carteirinha

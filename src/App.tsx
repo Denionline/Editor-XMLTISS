@@ -1,4 +1,4 @@
-import {Analytics} from "@vercel/analytics/next";
+import {Analytics} from "@vercel/analytics/react";
 import {RouterProvider} from "react-router-dom";
 import {ThemeProvider} from "./components/theme-provider";
 import {ContextXmlProvider} from "./context/ContextXml";

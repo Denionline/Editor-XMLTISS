@@ -67,7 +67,7 @@ export const TableXmlList = () => {
 									{ConvertToReal(row.details.totalValue)}
 								</TableCell>
 								<TableCell>
-									{Intl.DateTimeFormat("pt-BR").format(row.details.createdAt)}
+									{Intl.DateTimeFormat("pt-BR").format(new Date(row.details.createdAt))}
 								</TableCell>
 								<TableCell>
 									<Link to={`/arquive-list/xml?idXml=${row.ID}`}>

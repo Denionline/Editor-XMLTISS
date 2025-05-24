@@ -69,6 +69,7 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 					details: {
 						...newArquive.details,
 						totalValue: CalcTotalValueArquive(newArquive),
+						guidesQuantity: guides.length,
 					},
 					objectXml: {
 						...newArquive.objectXml,

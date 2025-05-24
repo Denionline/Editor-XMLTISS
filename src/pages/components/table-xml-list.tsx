@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { Button } from "../../components/ui/button";
+import {Link} from "react-router-dom";
+import {Button} from "../../components/ui/button";
 import {
 	Table,
 	TableBody,
@@ -8,9 +8,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "../../components/ui/table";
-import { ContextXml } from "@/context/ContextXml";
-import { useContext, useState } from "react";
-import { ConvertToReal } from "@/utils/Convert";
+import {ContextXml} from "@/context/ContextXml";
+import {useContext, useState} from "react";
+import {ConvertToReal} from "@/utils/Convert";
 import {
 	Dialog,
 	DialogClose,
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 
 export const TableXmlList = () => {
-	const { arquives, deleteArquive, tranformObjetoToXml } = useContext(ContextXml);
+	const {arquives, deleteArquive, tranformObjetoToXml} = useContext(ContextXml);
 	const [isDisabledBtnRemove, setIsDisabledBtnRemove] = useState(false);
 
 	function handleClickToRemoveXml(idXml: string) {
@@ -63,11 +63,11 @@ export const TableXmlList = () => {
 									}
 								</TableCell>
 								<TableCell>{row.details.guidesQuantity}</TableCell>
+								<TableCell>{ConvertToReal(row.details.totalValue)}</TableCell>
 								<TableCell>
-									{ConvertToReal(row.details.totalValue)}
-								</TableCell>
-								<TableCell>
-									{Intl.DateTimeFormat("pt-BR").format(new Date(row.details.createdAt))}
+									{Intl.DateTimeFormat("pt-BR").format(
+										new Date(row.details.createdAt)
+									)}
 								</TableCell>
 								<TableCell>
 									<Link to={`/arquive-list/xml?idXml=${row.ID}`}>

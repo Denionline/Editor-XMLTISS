@@ -367,11 +367,11 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 			});
 		}
 		case ActionTypes.DELETE_GUIDES: {
-			const idxGuide = state.findIndex((xml) => xml.ID == action.payload.idXml);
+			const idxArquive = state.findIndex((xml) => xml.ID == action.payload.idArquive);
 			const guidesDelete: string[] = action.payload.idxGuides;
 			return produce(state, (draft) => {
 				guidesDelete.forEach((idxDelete, idx) => {
-					draft[idxGuide].objectXml["ans:mensagemTISS"][
+					draft[idxArquive].objectXml["ans:mensagemTISS"][
 						"ans:prestadorParaOperadora"
 					]["ans:loteGuias"]["ans:guiasTISS"]["ans:guiaSP-SADT"].splice(
 						Number(idxDelete) - idx,

@@ -133,7 +133,7 @@ export const ArquiveXml = () => {
 		};
 	});
 
-	function handleClickSalvar(data: any) {
+	function handleClickSubmit(data: any) {
 		if (idXml) {
 			updateXmlDetails(idXml, data);
 			reset();
@@ -147,7 +147,12 @@ export const ArquiveXml = () => {
 			</Button>
 			<div className="w-full px-10 mt-4">
 				<Form {...form}>
-					<form>
+					<form onSubmit={handleSubmit(handleClickSubmit)}>
+						<button
+							type="submit"
+							style={{display: "none"}}
+							aria-hidden="true"
+						/>
 						<FormField
 							control={control}
 							name="nomeDoArquivo"
@@ -243,16 +248,16 @@ export const ArquiveXml = () => {
 								)}
 							/>
 						</div>
+						{formState.isDirty && (
+							<div className="w-full flex justify-end items-center gap-4 mt-6">
+								<Button variant="outline" onClick={handleClickCancel}>
+									Cancelar
+								</Button>
+								<Button type="submit">Salvar</Button>
+							</div>
+						)}
 					</form>
 				</Form>
-				{formState.isDirty && (
-					<div className="w-full flex justify-end items-center gap-4 mt-6">
-						<Button variant="outline" onClick={handleClickCancel}>
-							Cancelar
-						</Button>
-						<Button onClick={handleSubmit(handleClickSalvar)}>Salvar</Button>
-					</div>
-				)}
 				<h2 className="text-2xl mt-4">Guias</h2>
 				<DataTable columns={columns} data={guidesToTable} />
 			</div>

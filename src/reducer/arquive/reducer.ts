@@ -379,6 +379,9 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 						1
 					);
 				});
+				draft[idxArquive].details.totalValue = CalcTotalValueArquive(
+					draft[idxArquive]
+				);
 			});
 		}
 		case ActionTypes.DELETE_ARQUIVE: {

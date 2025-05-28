@@ -100,50 +100,49 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 			const {nomeDoArquivo, codigoDoPrestador, numeroDoProtocolo, registroANS} =
 				action.payload.formValues;
 
-			const idxXml = state.findIndex(
-				(arquive) => arquive.ID == action.payload.idXml
+			const idxArquive = state.findIndex(
+				(arquive) => arquive.ID == action.payload.idArquive
 			);
-			const xmlSelected = state[idxXml];
-			if (xmlSelected) {
-				if (xmlSelected.details.arquiveName != nomeDoArquivo) {
-					xmlSelected.details.arquiveName = nomeDoArquivo;
-				}
-
-				if (
-					xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
-						"ans:origem"
-					]["ans:identificacaoPrestador"]["ans:codigoPrestadorNaOperadora"]
-						._text != codigoDoPrestador
-				) {
-					xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
-						"ans:origem"
-					]["ans:identificacaoPrestador"][
-						"ans:codigoPrestadorNaOperadora"
-					]._text = codigoDoPrestador;
-				}
-
-				if (
-					xmlSelected.objectXml["ans:mensagemTISS"][
-						"ans:prestadorParaOperadora"
-					]["ans:loteGuias"]["ans:numeroLote"]._text != numeroDoProtocolo
-				) {
-					xmlSelected.objectXml["ans:mensagemTISS"][
-						"ans:prestadorParaOperadora"
-					]["ans:loteGuias"]["ans:numeroLote"]._text = numeroDoProtocolo;
-				}
-
-				if (
-					xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
-						"ans:destino"
-					]["ans:registroANS"]._text != registroANS
-				) {
-					xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
-						"ans:destino"
-					]["ans:registroANS"]._text = registroANS;
-				}
-			}
 			return produce(state, (draft) => {
-				draft[idxXml] = xmlSelected;
+				const xmlSelected = draft[idxArquive];
+				if (xmlSelected) {
+					if (xmlSelected.details.arquiveName != nomeDoArquivo) {
+						xmlSelected.details.arquiveName = nomeDoArquivo;
+					}
+
+					if (
+						xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
+							"ans:origem"
+						]["ans:identificacaoPrestador"]["ans:codigoPrestadorNaOperadora"]
+							._text != codigoDoPrestador
+					) {
+						xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
+							"ans:origem"
+						]["ans:identificacaoPrestador"][
+							"ans:codigoPrestadorNaOperadora"
+						]._text = codigoDoPrestador;
+					}
+
+					if (
+						xmlSelected.objectXml["ans:mensagemTISS"][
+							"ans:prestadorParaOperadora"
+						]["ans:loteGuias"]["ans:numeroLote"]._text != numeroDoProtocolo
+					) {
+						xmlSelected.objectXml["ans:mensagemTISS"][
+							"ans:prestadorParaOperadora"
+						]["ans:loteGuias"]["ans:numeroLote"]._text = numeroDoProtocolo;
+					}
+
+					if (
+						xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
+							"ans:destino"
+						]["ans:registroANS"]._text != registroANS
+					) {
+						xmlSelected.objectXml["ans:mensagemTISS"]["ans:cabecalho"][
+							"ans:destino"
+						]["ans:registroANS"]._text = registroANS;
+					}
+				}
 			});
 		}
 		case ActionTypes.UPDATE_GUIDE_DETAILS: {
@@ -367,7 +366,9 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 			});
 		}
 		case ActionTypes.DELETE_GUIDES: {
-			const idxArquive = state.findIndex((xml) => xml.ID == action.payload.idArquive);
+			const idxArquive = state.findIndex(
+				(xml) => xml.ID == action.payload.idArquive
+			);
 			const guidesDelete: string[] = action.payload.idxGuides;
 			return produce(state, (draft) => {
 				guidesDelete.forEach((idxDelete, idx) => {

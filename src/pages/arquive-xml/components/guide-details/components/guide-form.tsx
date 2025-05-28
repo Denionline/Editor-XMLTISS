@@ -106,6 +106,7 @@ export const GuideForm = ({guide, form, handleClickSubmit}: GuideFormProps) => {
 										<Input
 											{...field}
 											type="date"
+											lang="pt-BR"
 											value={field.value ? field.value : ""}
 										/>
 									) : (

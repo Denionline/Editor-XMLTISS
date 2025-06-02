@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useEffect, useReducer} from "react";
-import {ObjectXmlType} from "@/utils/XmlTypes";
+import {GuiaSPSADT, ObjectXmlType} from "@/utils/XmlTypes";
 import {FormGuideType} from "@/pages/arquive-xml/components/guide-details/page";
 import {useToast} from "@/hooks/use-toast";
 import {CheckCircle} from "@phosphor-icons/react";
@@ -14,6 +14,8 @@ import {
 	updateGuideDetailsAction,
 	updateXmlDetailsAction,
 } from "@/reducer/arquive/actions";
+import {CheckNewField} from "@/components/CheckNewField";
+import {CheckFieldObject} from "@/utils/CheckFieldObject";
 
 export interface ContextXmlType {
 	arquives: ArquiveType[] | undefined;
@@ -92,6 +94,13 @@ export const ContextXmlProvider = ({children}: ContextProviderProps) => {
 		idxGuide: number,
 		formValues: FormGuideType
 	) {
+		const guide = arquives.find((arquive) => arquive.ID == idArquive)
+			?.objectXml["ans:mensagemTISS"]["ans:prestadorParaOperadora"][
+			"ans:loteGuias"
+		]["ans:guiasTISS"]["ans:guiaSP-SADT"][idxGuide] as GuiaSPSADT;
+		if (CheckFieldObject({guide, formValues})) {
+			console.log("");
+		}
 		try {
 			dispatch(updateGuideDetailsAction(idArquive, idxGuide, formValues));
 			toast({
@@ -165,6 +174,12 @@ export const ContextXmlProvider = ({children}: ContextProviderProps) => {
 		}
 	}
 
+	function addNewFieldOnObject() {
+		
+	}
+
+	function handleCheckComponent() {}
+
 	return (
 		<ContextXml.Provider
 			value={{
@@ -178,6 +193,7 @@ export const ContextXmlProvider = ({children}: ContextProviderProps) => {
 			}}
 		>
 			{children}
+			<CheckNewField />
 		</ContextXml.Provider>
 	);
 };

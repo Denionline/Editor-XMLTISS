@@ -19,7 +19,7 @@ export const columns: ColumnDef<{
 	guiaDaOperadora: string | {_text: string | undefined};
 	senha: string | {_text: string | undefined};
 	dataDaAutorizacao: string | {_text: string | undefined};
-	dataDaValidadeDaSenha: string | { _text: string | undefined };
+	dataDaValidadeDaSenha: string | {_text: string | undefined};
 }>[] = [
 	{
 		id: "select",
@@ -64,8 +64,8 @@ export const columns: ColumnDef<{
 		header: "Data da autorização",
 	},
 	{
-	  accessorKey: "dataDaValidadeDaSenha",
-	  header: "Data da validade da senha",
+		accessorKey: "dataDaValidadeDaSenha",
+		header: "Data da validade da senha",
 	},
 	{
 		id: "actions",

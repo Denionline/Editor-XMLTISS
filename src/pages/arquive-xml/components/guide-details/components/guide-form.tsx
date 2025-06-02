@@ -65,7 +65,7 @@ export const GuideForm = ({guide, form, handleClickSubmit}: GuideFormProps) => {
 									Senha
 								</FormLabel>
 								<FormControl>
-									{field ? <Input {...field} /> : <Skeleton />}
+									{field ? <Input {...field} disabled={!guide["ans:dadosAutorizacao"]["ans:senha"]} /> : <Skeleton />}
 								</FormControl>
 							</FormItem>
 						)}

@@ -84,7 +84,6 @@ export const GuideDetails = ({idxGuide}: GuideDetailsProps) => {
 	const {handleSubmit, reset, formState} = form;
 
 	function setDefaultValuesOnForm() {
-		console.log(guide);
 		if (guide) {
 			reset({
 				carteirinha: guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text,

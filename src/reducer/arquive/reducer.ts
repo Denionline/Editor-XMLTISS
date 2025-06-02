@@ -196,7 +196,7 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 					guiaDaOperadora;
 			}
 
-			if (
+			if (guide["ans:dadosAutorizacao"]["ans:senha"] &&
 				guide["ans:dadosAutorizacao"]["ans:senha"]._text !=
 				senha
 			) {

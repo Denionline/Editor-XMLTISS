@@ -26,6 +26,7 @@ export const formSchema = z.object({
 	carteirinha: z.string(),
 	guiaDoPrestador: z.string(),
 	guiaDaOperadora: z.string(),
+	senha: z.string(),
 	dataDaAutorizacao: z.string().date(),
 	dataDaValidadeDaSenha: z.string().date().optional(),
 	procedimentos: z
@@ -83,6 +84,7 @@ export const GuideDetails = ({idxGuide}: GuideDetailsProps) => {
 	const {handleSubmit, reset, formState} = form;
 
 	function setDefaultValuesOnForm() {
+		console.log(guide);
 		if (guide) {
 			reset({
 				carteirinha: guide["ans:dadosBeneficiario"]["ans:numeroCarteira"]._text,
@@ -90,6 +92,9 @@ export const GuideDetails = ({idxGuide}: GuideDetailsProps) => {
 					guide["ans:cabecalhoGuia"]["ans:numeroGuiaPrestador"]._text,
 				guiaDaOperadora:
 					guide["ans:dadosAutorizacao"]["ans:numeroGuiaOperadora"]._text,
+				senha: guide["ans:dadosAutorizacao"]["ans:senha"]
+					? guide["ans:dadosAutorizacao"]["ans:senha"]._text
+					: "",
 				dataDaAutorizacao:
 					guide["ans:dadosAutorizacao"]["ans:dataAutorizacao"]._text,
 				dataDaValidadeDaSenha:
@@ -181,7 +186,10 @@ export const GuideDetails = ({idxGuide}: GuideDetailsProps) => {
 	}, [guide, arquives]);
 
 	return (
-		<DialogContent className="flex flex-col justify-between max-w-5xl h-5/6" aria-describedby={undefined}>
+		<DialogContent
+			className="flex flex-col justify-between max-w-5xl h-5/6"
+			aria-describedby={undefined}
+		>
 			<DialogHeader>
 				<DialogTitle>Detalhes da Guia</DialogTitle>
 			</DialogHeader>

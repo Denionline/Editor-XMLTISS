@@ -56,6 +56,20 @@ export const GuideForm = ({guide, form, handleClickSubmit}: GuideFormProps) => {
 							</FormItem>
 						)}
 					/>
+					<FormField
+						control={control}
+						name="senha"
+						render={({field}) => (
+							<FormItem className="ml-1 w-6/12">
+								<FormLabel className="font-semibold">
+									Senha
+								</FormLabel>
+								<FormControl>
+									{field ? <Input {...field} /> : <Skeleton />}
+								</FormControl>
+							</FormItem>
+						)}
+					/>
 				</div>
 
 				<div className="flex flex-col md:flex-row">

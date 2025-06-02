@@ -150,6 +150,7 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 				carteirinha,
 				guiaDoPrestador,
 				guiaDaOperadora,
+				senha,
 				dataDaAutorizacao,
 				dataDaValidadeDaSenha,
 				procedimentos,
@@ -193,6 +194,14 @@ export function arquivesReducer(state: ArquiveType[], action: any) {
 			) {
 				guide["ans:dadosAutorizacao"]["ans:numeroGuiaOperadora"]._text =
 					guiaDaOperadora;
+			}
+
+			if (
+				guide["ans:dadosAutorizacao"]["ans:senha"]._text !=
+				senha
+			) {
+				guide["ans:dadosAutorizacao"]["ans:senha"]._text =
+					senha;
 			}
 
 			if (

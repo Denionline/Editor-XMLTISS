@@ -16,6 +16,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
+// import {isValid} from "date-fns";
 
 const formSchema = z.object({
 	nomeDoArquivo: z.string(),
@@ -117,19 +118,15 @@ export const ArquiveXml = () => {
 						)
 				  )
 				: "",
-			/*{
 			dataDaValidadeDaSenha: guide?.["ans:dadosAutorizacao"]?.[
-			  "ans:dataValidadeSenha"
+				"ans:dataValidadeSenha"
 			]?._text
-			  ? Intl.DateTimeFormat("pt-BR").format(
-			      new Date(
-			        guide["ans:dadosAutorizacao"][
-			          "ans:dataValidadeSenha"
-			        ]._text.toString()
-			      )
-			    )
-			  : "",
-				}*/
+				? new Date(
+						guide?.["ans:dadosAutorizacao"]?.[
+							"ans:dataValidadeSenha"
+						]?._text?.toString()
+				  ).toLocaleDateString("pt-BR")
+				: "",
 		};
 	});
 

@@ -181,7 +181,7 @@ export const GuideDetails = ({idxGuide}: GuideDetailsProps) => {
 	}, [guide, arquives]);
 
 	return (
-		<DialogContent className="flex flex-col justify-between max-w-5xl h-5/6">
+		<DialogContent className="flex flex-col justify-between max-w-5xl h-5/6" aria-describedby={undefined}>
 			<DialogHeader>
 				<DialogTitle>Detalhes da Guia</DialogTitle>
 			</DialogHeader>

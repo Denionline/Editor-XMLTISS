@@ -20,3 +20,29 @@ export function App() {
 		</>
 	);
 }
+
+// import axios from "axios";
+// import {Button} from "./components/ui/button";
+// const callApi = async () => {
+// try {
+// 	await axios
+// 		.get("/api/server", {
+// 			params: {user: "Daniel"},
+// 		})
+// 		.then((res) => console.log(res));
+// } catch (err) {
+// 	console.error(err);
+// }
+// try {
+// 	await axios({
+// 		method: "post",
+// 		url: "/api/server",
+// 		data: {
+// 			name: "Daniel",
+// 			email: "daniel@email.com",
+// 		},
+// 	}).then((res) => console.log(res));
+// } catch (error) {
+// 	console.error(error);
+// }
+// };

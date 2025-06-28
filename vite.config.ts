@@ -4,11 +4,16 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      buffer: "buffer/",
-    },
-  },
+	plugins: [react()],
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "./src"),
+			buffer: "buffer/",
+		},
+	},
+	server: {
+		proxy: {
+			'/api': 'http://localhost:3000',
+		},
+	},
 });

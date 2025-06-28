@@ -25,6 +25,7 @@
     "@radix-ui/react-tooltip": "^1.1.3",
     "@tanstack/react-table": "^8.20.5",
     "@vercel/analytics": "^1.5.0",
+    "axios": "^1.10.0",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

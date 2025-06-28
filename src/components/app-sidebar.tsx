@@ -17,6 +17,9 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import {Button} from "./ui/button";
+import {Dialog, DialogContent, DialogTitle} from "./ui/dialog";
+import {Sign} from "./sign";
+import {useState} from "react";
 
 const data2SideItem = [
 	{
@@ -32,6 +35,12 @@ const data2SideItem = [
 ];
 
 export function AppSidebar() {
+	const [isOpenSign, setIsOpenSign] = useState(false);
+
+	function handleClickButton() {
+		setIsOpenSign((prev) => (prev ? false : true));
+	}
+
 	return (
 		<Sidebar collapsible="icon">
 			<SidebarHeader />
@@ -56,6 +65,12 @@ export function AppSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
+				<Dialog open={isOpenSign} onOpenChange={setIsOpenSign}>
+					<DialogContent aria-describedby={undefined}>
+						<DialogTitle />
+						<Sign />
+					</DialogContent>
+				</Dialog>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton>
@@ -67,15 +82,18 @@ export function AppSidebar() {
 						side="top"
 						className="w-[--radix-popper-anchor-width]"
 					>
-						<DropdownMenuItem className="p-0" disabled>
-							<Button variant="ghost" className="w-full justify-start">
-								<span>Account</span>
+						<DropdownMenuItem className="p-0">
+							<Button
+								variant="ghost"
+								className="w-full justify-start"
+								onClick={handleClickButton}
+							>
+								<span>Conta</span>
 							</Button>
 						</DropdownMenuItem>
-
 						<DropdownMenuItem className="p-0" disabled>
 							<Button variant="ghost" className="w-full justify-start">
-								Theme
+								Tema
 							</Button>
 						</DropdownMenuItem>
 
